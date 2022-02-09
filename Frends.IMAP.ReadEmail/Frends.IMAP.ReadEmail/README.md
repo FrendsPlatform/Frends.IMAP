@@ -23,7 +23,7 @@ https://www.myget.org/F/frends-tasks/api/v2.
 |UserName                   |string                     |Account name to login with|emailUser|
 |Password                   |string                     |Account password          |***|
 
-### Options
+## Options
 
 |Property                   |Type                       |Description                |Example|
 |---------------------------|---------------------------|---------------------------|---------------|
@@ -74,3 +74,17 @@ Run tests
 Create a NuGet package
 
 `dotnet pack --configuration Release`
+
+# Testing
+
+## Unit Tests
+
+Unit tests are run on each push and can be run manually by `dotnet test` command.
+
+## Integration Tests
+
+Integration tests in Frends.IMAP are run as part of unit test runs.
+
+## Performance Tests
+
+No performance tests are done in Frends.IMAP as the IMAP (email) server itself is the main component during execution.
