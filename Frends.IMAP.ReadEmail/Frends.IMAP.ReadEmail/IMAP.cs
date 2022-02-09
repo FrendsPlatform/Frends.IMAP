@@ -11,7 +11,8 @@ namespace Frends.IMAP.ReadEmail
     public class IMAP
     {
         /// <summary>
-        /// Read emails from IMAP server
+        /// Read emails from IMAP server.
+        /// [Documentation](https://github.com/FrendsPlatform/Frends.IMAP/tree/main/Frends.IMAP.ReadEmail)
         /// </summary>
         /// <param name="settings">IMAP server settings</param>
         /// <param name="options">Email options</param>

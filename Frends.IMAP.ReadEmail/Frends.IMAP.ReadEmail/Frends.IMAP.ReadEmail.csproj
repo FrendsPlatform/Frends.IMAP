@@ -1,8 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<Version>1.0.0</Version>
+		<Authors>HiQ Finland</Authors>
+		<Company>HiQ Finland</Company>
+		<Product>Frends</Product>
+		<Description>Task for reading email using IMAP protocol..</Description>
+		<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MailKit" Version="3.1.1" />
