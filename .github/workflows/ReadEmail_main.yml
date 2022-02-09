@@ -1,12 +1,12 @@
-name: Frends.SMTP.SendEmail Main
+name: Frends.IMAP.ReadEmail Main
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'Frends.SMTP.SendEmail/**'
-      - 'Frends.SMTP.SendEmail.Tests/**'
+      - 'Frends.IMAP.ReadEmail/**'
+      - 'Frends.IMAP.ReadEmail.Tests/**'
   workflow_dispatch:
   
 
@@ -14,9 +14,9 @@ jobs:
   build:
     uses: FrendsPlatform/FrendsTasks/.github/workflows/build_main.yml@main
     with:
-      env_var_name_1: SMTP_PASSWORD
-      workdir: Frends.SMTP.SendEmail
+      env_var_name_1: IMAP_PASSWORD
+      workdir: Frends.IMAP.ReadEmail
     secrets:
-      env_var_value_1: ${{ secrets.SMTP_PASSWORD }}
+      env_var_value_1: ${{ secrets.IMAP_PASSWORD }}
       badge_service_api_key: ${{ secrets.BADGE_SERVICE_API_KEY }}
       
