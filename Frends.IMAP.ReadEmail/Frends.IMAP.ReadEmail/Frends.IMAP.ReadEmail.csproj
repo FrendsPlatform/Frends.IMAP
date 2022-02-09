@@ -6,7 +6,7 @@
 		<Authors>HiQ Finland</Authors>
 		<Company>HiQ Finland</Company>
 		<Product>Frends</Product>
-		<Description>Task for reading email using IMAP protocol..</Description>
+		<Description>Task for reading email using IMAP protocol.</Description>
 		<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
 	</PropertyGroup>
 
