@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Authors>HiQ Finland</Authors>
 		<Company>HiQ Finland</Company>
 		<Product>Frends</Product>
@@ -11,9 +11,11 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="[2.5.2]" />
-	<PackageReference Include="MimeKit" Version="2.9.2" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
+	<PackageReference Include="MailKit" Version="[2.5.2]" />
+    <PackageReference Include="MimeKit" Version="2.9.2" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.8" />
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
 
 </Project>
