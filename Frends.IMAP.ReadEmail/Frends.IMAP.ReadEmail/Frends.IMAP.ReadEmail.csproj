@@ -1,13 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net471</TargetFrameworks>
+		<TargetFrameworks>net6.0</TargetFrameworks>
 		<Version>1.0.6</Version>
-		<Authors>HiQ Finland</Authors>
-		<Company>HiQ Finland</Company>
+		<Authors>Frends</Authors>
+		<Copyright>Frends</Copyright>
+		<Company>Frends</Company>
 		<Product>Frends</Product>
-		<Description>Task for reading email using IMAP protocol.</Description>
+		<PackageTags>Frends</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Description>Task for reading email using IMAP protocol. [Documentation](https://github.com/FrendsPlatform/Frends.IMAP/tree/main/Frends.IMAP.ReadEmail).</Description>
 		<PackageProjectUrl>https://frends.com/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/FrendsPlatform/Frends.IMAP</RepositoryUrl>
 	</PropertyGroup>
 
   <ItemGroup>
