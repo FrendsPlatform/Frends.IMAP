@@ -34,6 +34,19 @@ namespace Frends.IMAP.ReadEmail
         public bool AcceptAllCerts { get; set; }
 
         /// <summary>
+        /// Should the task save attachments into designated directory?
+        /// </summary>
+        [DefaultValue(false)]
+        public bool SaveAttachments { get; set; }
+
+        /// <summary>
+        /// Directory to store all attachments
+        /// </summary>
+        [DefaultValue("c:/SavedAttachments")]
+        [DisplayFormat(DataFormatString = "Text")]
+        public string ArchiveDirectory { get; set; }
+
+        /// <summary>
         /// Account name to login with
         /// </summary>
         [DefaultValue("accountName")]

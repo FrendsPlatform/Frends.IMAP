@@ -5,6 +5,7 @@ using MimeKit;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.IO;
 
 namespace Frends.IMAP.ReadEmail
 {
@@ -43,6 +44,7 @@ namespace Frends.IMAP.ReadEmail
                     client.ServerCertificateValidationCallback = (s, x509certificate, x590chain, sslPolicyErrors) => true;
                 }
 
+
                 // connect to imap server
                 client.Connect(settings.Host, settings.Port, settings.UseSSL);
 
@@ -78,6 +80,29 @@ namespace Frends.IMAP.ReadEmail
                     {
                         inbox.AddFlags(messageIds[i], MessageFlags.Seen, true);
                     }
+                }
+
+                // save attachments?
+                if (settings.SaveAttachments && !string.IsNullOrEmpty(settings.ArchiveDirectory))
+                {
+                    //check existence of directory
+                    bool _exist = Directory.Exists(settings.ArchiveDirectory);
+
+                    //if not existing and set to create new, then proceed
+                    if(!_exist && options.CreateDirectoryIfNotFound)
+                        Directory.CreateDirectory(settings.ArchiveDirectory);
+                    
+                    //check again, creation might not have worked
+                    _exist = Directory.Exists(settings.ArchiveDirectory);
+
+                    //if exists, do stuff
+                    if(_exist){
+
+                    }
+                    else{
+
+                    }
+
                 }
 
                 // should delete emails?
