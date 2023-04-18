@@ -72,7 +72,8 @@ namespace Frends.IMAP.ReadEmail
                         BodyHtml = msg.HtmlBody,
                         From = string.Join(",", msg.From.Select(j => j.ToString())),
                         To = string.Join(",", msg.To.Select(j => j.ToString())),
-                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString()))
+                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
+                        Attachments = msg.Attachments
                     });
 
                     // should mark emails as read?
@@ -97,7 +98,27 @@ namespace Frends.IMAP.ReadEmail
 
                     //if exists, do stuff
                     if(_exist){
+                        foreach(var msg in result)
+                        {
+                            foreach (var attachment in msg.Attachments) {
+                                if (attachment is MessagePart) {
+                                    var fileName = attachment.ContentDisposition?.FileName;
+                                    var rfc822 = (MessagePart) attachment;
 
+                                    if (string.IsNullOrEmpty (fileName))
+                                        fileName = "attached-message.eml";
+
+                                    using (var stream = File.Create (settings.ArchiveDirectory+"/"+fileName))
+                                        rfc822.Message.WriteTo (stream);
+                                } else {
+                                    var part = (MimePart) attachment;
+                                    var fileName = part.FileName;
+
+                                    using (var stream = File.Create (settings.ArchiveDirectory+"/"+fileName))
+                                        part.Content.DecodeTo (stream);
+                                }
+                            }                       
+                        }
                     }
                     else{
 

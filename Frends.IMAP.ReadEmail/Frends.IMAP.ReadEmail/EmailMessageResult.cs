@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MimeKit;
 
 namespace Frends.IMAP.ReadEmail
 {
@@ -47,6 +48,11 @@ namespace Frends.IMAP.ReadEmail
         /// Body html is available
         /// </summary>
         public string BodyHtml { get; set; }
+
+        /// <summary>
+        /// Attachment download path
+        /// </summary>
+        public IEnumerable<MimeEntity> Attachments { get; set; }
 
         /// <summary>
         /// Attachment download path
