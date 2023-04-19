@@ -22,6 +22,7 @@ https://www.myget.org/F/frends-tasks/api/v2.
 |AcceptAllCerts             |bool                       |Accept all certificates when connecting the host, if true, will accept event invalid certificates. If false, will accept self-signed certificates if the root is untrusted|false|
 |UserName                   |string                     |Account name to login with|emailUser|
 |Password                   |string                     |Account password          |***|
+|ArchiveDirectory           |string                     |General directory for storing attachments|c:/SavedAttachments|
 
 ## Options
 
@@ -31,6 +32,7 @@ https://www.myget.org/F/frends-tasks/api/v2.
 |GetOnlyUnreadEmails        |bool                       |If true, will retrieve only unread emails|false|
 |MarkEmailsAsRead           |bool                       |If true, will mark retrieved emails as read|false|
 |DeleteReadEmails           |bool                       |If true, will delete retrieved emails from server|false|
+|CreateDirectoryIfNotFound  |bool                       |If true, will create new directory for attachments, if not found under "ArchiveDirectory" |false|
 
 ## Result
 ReadEmail task returns a list of EmailMessageResult objects. Each object contains following properties:
@@ -44,7 +46,7 @@ ReadEmail task returns a list of EmailMessageResult objects. Each object contain
 |Date                       |DateTime                   |Received date              | ... |
 |Subject                    |string                     |Email subject              |Important email!|
 |BodyText                   |string                     |Plain text email body      | ... |
-|BodyHtml                   |string                     |Html email body            | ... |
+|AttachmentSaveDirs         |list<string>               |Listed dirs for saved att. | ... |
 
 ## Usage
 You can loop email message by giving task result as input to foreach-shape:
