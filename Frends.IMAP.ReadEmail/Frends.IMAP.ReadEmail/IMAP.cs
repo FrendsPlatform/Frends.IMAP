@@ -28,6 +28,7 @@ namespace Frends.IMAP.ReadEmail
         /// string Subject.
         /// string BodyText.
         /// string BodyHtml.
+        /// list<string> AttachmentSaveDirs.
         /// }
         /// </returns>
         /// 
@@ -65,7 +66,6 @@ namespace Frends.IMAP.ReadEmail
                 for (int i = 0; i < messageIds.Count && i < options.MaxEmails; i++)
                 {
                     MimeMessage msg = inbox.GetMessage(messageIds[i]);
-                    List<string> saveDirs = new List<string>();
 
                     result.Add(new EmailMessageResult
                     {
@@ -76,7 +76,8 @@ namespace Frends.IMAP.ReadEmail
                         BodyHtml = msg.HtmlBody,
                         From = string.Join(",", msg.From.Select(j => j.ToString())),
                         To = string.Join(",", msg.To.Select(j => j.ToString())),
-                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString()))
+                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
+                        AttachmentSaveDirs = new List<string>()
                     });
                     attachments.Add(msg.Attachments);
 
@@ -103,35 +104,39 @@ namespace Frends.IMAP.ReadEmail
                     //if directory exists, copy attachments there
                     if(_exist){
                         
-                        for (int i = 0; i < result.Count; i++)
+                        for (int i = 0; i < attachments.Count; i++)
                         {
-                            string directoryName = settings.ArchiveDirectory+"/"+result[i].Date.ToString("yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss");
-                            Directory.CreateDirectory(directoryName);
+                            if(attachments[i].Count() > 0)
+                            {
+                                string directoryName = settings.ArchiveDirectory+"/"+result[i].Date.ToString("yyyy-MM-dd HH:mm:ss");
+                                Directory.CreateDirectory(directoryName);
 
-                            foreach (var attachment in attachments[i]) {
-                                string _directory = directoryName+"/";
-                                if (attachment is MessagePart) {
-                                    var fileName = attachment.ContentDisposition?.FileName;
-                                    var rfc822 = (MessagePart) attachment;
-                                    _directory += fileName;
+                                foreach (var attachment in attachments[i]) {
+                                    string _directory = directoryName+"/";
+                                    
+                                    if (attachment is MessagePart) {
+                                        var fileName = attachment.ContentDisposition?.FileName;
+                                        var rfc822 = (MessagePart) attachment;
+                                        _directory += fileName;
 
-                                    if (string.IsNullOrEmpty (fileName))
-                                        fileName = "attached-message.eml";
+                                        if (string.IsNullOrEmpty (fileName))
+                                            fileName = "attached-message.eml";
 
-                                    using (var stream = File.Create (_directory))
-                                        rfc822.Message.WriteTo (stream);
+                                        using (var stream = File.Create (_directory))
+                                            rfc822.Message.WriteTo (stream);
+                                    }
+                                    else{
+                                        var part = (MimePart) attachment;
+                                        var fileName = part.FileName;
+                                        _directory += fileName;
+
+                                        using (var stream = File.Create (_directory))
+                                            part.Content.DecodeTo (stream);
+                                    }
+                                    
+                                    result[i].AttachmentSaveDirs.Add(_directory);
                                 }
-                                else{
-                                    var part = (MimePart) attachment;
-                                    var fileName = part.FileName;
-                                    _directory += fileName;
-
-                                    using (var stream = File.Create (_directory))
-                                        part.Content.DecodeTo (stream);
-                                }
-
-                                result[i].AttachmentSaveDirs.Add(_directory);
-                            }                       
+                            }
                         }
                         
                     }
