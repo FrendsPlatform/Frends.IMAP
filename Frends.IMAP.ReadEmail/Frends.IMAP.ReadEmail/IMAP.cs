@@ -35,6 +35,8 @@ namespace Frends.IMAP.ReadEmail
         public static List<EmailMessageResult> ReadEmail([PropertyTab] IMAPSettings settings, [PropertyTab] IMAPOptions options)
         {
             var result = new List<EmailMessageResult>();
+            //additional list for attachments, not to modify EmailMessageResult
+            var attachments = new List<IEnumerable<MimeEntity>>();
 
             using (var client = new ImapClient())
             {
@@ -63,6 +65,8 @@ namespace Frends.IMAP.ReadEmail
                 for (int i = 0; i < messageIds.Count && i < options.MaxEmails; i++)
                 {
                     MimeMessage msg = inbox.GetMessage(messageIds[i]);
+                    List<string> saveDirs = new List<string>();
+
                     result.Add(new EmailMessageResult
                     {
                         Id = msg.MessageId,
@@ -72,9 +76,9 @@ namespace Frends.IMAP.ReadEmail
                         BodyHtml = msg.HtmlBody,
                         From = string.Join(",", msg.From.Select(j => j.ToString())),
                         To = string.Join(",", msg.To.Select(j => j.ToString())),
-                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
-                        Attachments = msg.Attachments
+                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString()))
                     });
+                    attachments.Add(msg.Attachments);
 
                     // should mark emails as read?
                     if (!options.DeleteReadEmails && options.MarkEmailsAsRead)
@@ -96,32 +100,40 @@ namespace Frends.IMAP.ReadEmail
                     //check again, creation might not have worked
                     _exist = Directory.Exists(settings.ArchiveDirectory);
 
-                    //if exists, do stuff
+                    //if directory exists, copy attachments there
                     if(_exist){
-                        foreach(var msg in result)
+                        
+                        for (int i = 0; i < result.Count; i++)
                         {
-                            foreach (var attachment in msg.Attachments) {
+                            string directoryName = settings.ArchiveDirectory+"/"+result[i].Date.ToString("yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss");
+                            Directory.CreateDirectory(directoryName);
+
+                            foreach (var attachment in attachments[i]) {
+                                string _directory = directoryName+"/";
                                 if (attachment is MessagePart) {
                                     var fileName = attachment.ContentDisposition?.FileName;
                                     var rfc822 = (MessagePart) attachment;
+                                    _directory += fileName;
 
                                     if (string.IsNullOrEmpty (fileName))
                                         fileName = "attached-message.eml";
 
-                                    using (var stream = File.Create (settings.ArchiveDirectory+"/"+fileName))
+                                    using (var stream = File.Create (_directory))
                                         rfc822.Message.WriteTo (stream);
-                                } else {
+                                }
+                                else{
                                     var part = (MimePart) attachment;
                                     var fileName = part.FileName;
+                                    _directory += fileName;
 
-                                    using (var stream = File.Create (settings.ArchiveDirectory+"/"+fileName))
+                                    using (var stream = File.Create (_directory))
                                         part.Content.DecodeTo (stream);
                                 }
+
+                                result[i].AttachmentSaveDirs.Add(_directory);
                             }                       
                         }
-                    }
-                    else{
-
+                        
                     }
 
                 }
