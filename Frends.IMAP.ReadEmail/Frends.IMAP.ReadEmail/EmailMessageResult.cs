@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MimeKit;
 
 namespace Frends.IMAP.ReadEmail
 {

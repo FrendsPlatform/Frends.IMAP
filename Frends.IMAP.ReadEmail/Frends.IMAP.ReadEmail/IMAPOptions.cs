@@ -27,5 +27,11 @@ namespace Frends.IMAP.ReadEmail
         /// If true, then received emails will be hard deleted
         /// </summary>
         public bool DeleteReadEmails { get; set; }
+
+        /// <summary>
+        /// If true, then creates an attachment directory if not existing
+        /// </summary>
+        [DefaultValue(false)]
+        public bool CreateDirectoryIfNotFound { get; set; }
     }
 }
