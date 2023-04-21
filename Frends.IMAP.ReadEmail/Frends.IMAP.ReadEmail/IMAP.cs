@@ -28,7 +28,7 @@ namespace Frends.IMAP.ReadEmail
         /// string Subject.
         /// string BodyText.
         /// string BodyHtml.
-        /// list<string> AttachmentSaveDirs.
+        /// List<string> AttachmentSaveDirs.
         /// }
         /// </returns>
         /// 
@@ -36,8 +36,8 @@ namespace Frends.IMAP.ReadEmail
         public static List<EmailMessageResult> ReadEmail([PropertyTab] IMAPSettings settings, [PropertyTab] IMAPOptions options)
         {
             var result = new List<EmailMessageResult>();
-            //additional list for attachments, not to modify EmailMessageResult
-            var attachments = new List<IEnumerable<MimeEntity>>();
+            //additional dictionary for attachments, not to modify EmailMessageResult - stores message ID and attachments
+            IDictionary<string,IEnumerable<MimeEntity>> attachments = new Dictionary<string, IEnumerable<MimeEntity>>();
 
             using (var client = new ImapClient())
             {
@@ -79,7 +79,7 @@ namespace Frends.IMAP.ReadEmail
                         Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
                         AttachmentSaveDirs = new List<string>()
                     });
-                    attachments.Add(msg.Attachments);
+                    attachments.Add(msg.MessageId, msg.Attachments);
 
                     // should mark emails as read?
                     if (!options.DeleteReadEmails && options.MarkEmailsAsRead)
@@ -89,30 +89,31 @@ namespace Frends.IMAP.ReadEmail
                 }
 
                 // save attachments?
-                if (settings.SaveAttachments && !string.IsNullOrEmpty(settings.ArchiveDirectory))
+                if (settings.SaveAttachments && !string.IsNullOrEmpty(settings.AttachmentDirectory))
                 {
                     //check existence of directory
-                    bool _exist = Directory.Exists(settings.ArchiveDirectory);
+                    bool exist = Directory.Exists(settings.AttachmentDirectory);
 
                     //if not existing and set to create new, then proceed
-                    if(!_exist && options.CreateDirectoryIfNotFound)
-                        Directory.CreateDirectory(settings.ArchiveDirectory);
+                    if(!exist && options.CreateDirectoryIfNotFound)
+                        Directory.CreateDirectory(settings.AttachmentDirectory);
                     
                     //check again, creation might not have worked
-                    _exist = Directory.Exists(settings.ArchiveDirectory);
+                    exist = Directory.Exists(settings.AttachmentDirectory);
 
                     //if directory exists, copy attachments there
-                    if(_exist){
-                        
-                        for (int i = 0; i < attachments.Count; i++)
+                    if(exist){
+                        foreach(var msg in attachments)
                         {
-                            if(attachments[i].Count() > 0)
+                            if(msg.Value.Any())
                             {
-                                string directoryName = settings.ArchiveDirectory+"/"+result[i].Date.ToString("yyyy-MM-dd HH:mm:ss");
+                                //find message with matching ID
+                                var item = result.Find(i => i.Id == msg.Key);
+                                var directoryName = $"{settings.AttachmentDirectory}/{item.Date.ToString("s")}";
                                 Directory.CreateDirectory(directoryName);
 
-                                foreach (var attachment in attachments[i]) {
-                                    string _directory = directoryName+"/";
+                                foreach (var attachment in msg.Value) {
+                                    string _directory = $"{directoryName}/";
                                     
                                     if (attachment is MessagePart) {
                                         var fileName = attachment.ContentDisposition?.FileName;
@@ -134,11 +135,14 @@ namespace Frends.IMAP.ReadEmail
                                             part.Content.DecodeTo (stream);
                                     }
                                     
-                                    result[i].AttachmentSaveDirs.Add(_directory);
+                                    item.AttachmentSaveDirs.Add(_directory);
                                 }
                             }
                         }
                         
+                    }
+                    else{
+
                     }
 
                 }
