@@ -52,6 +52,6 @@ namespace Frends.IMAP.ReadEmail
         /// <summary>
         /// Attachment download path
         /// </summary>
-        public List<string> AttachmentSaveDirs { get; set; }
+        public List<string> SavedAttachmentsPaths { get; set; }
     }
 }
