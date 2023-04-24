@@ -67,7 +67,7 @@ namespace Frends.IMAP.ReadEmail
                         throw;
                     }
                 else{
-                    throw new System.Exception("Directory not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' for a valid path or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
+                    throw new System.Exception($"Directory '{settings.SavedAttachmentsDirectory}' not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' for a valid path or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
                 }
             }
             //saving attachemnts into designated directory

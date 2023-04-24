@@ -17,14 +17,15 @@ namespace Frends.IMAP.ReadEmail.Tests
             var passwordFromEnvironment = Environment.GetEnvironmentVariable("IMAP_PASSWORD");
             var imapSettings = new IMAPSettings
             {
-                UserName = "emwiwi@wp.pl",
-                Password = "tajnehaslo2137",
-                Host = "imap.wp.pl",
+                UserName = "frends.tests@outlook.com",
+                Password = passwordFromEnvironment,
+                Host = "outlook.office365.com",
                 Port = 993,
                 AcceptAllCerts = true,
                 UseSSL = true,
                 SaveAttachments = true,
-                SavedAttachmentsDirectory = "/home/mike/Projects/_temp"
+                //Getting path to task directory
+                SavedAttachmentsDirectory = $"{System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName}/_temp"
             };
             var imapOptions = new IMAPOptions
             {
