@@ -17,12 +17,14 @@ namespace Frends.IMAP.ReadEmail.Tests
             var passwordFromEnvironment = Environment.GetEnvironmentVariable("IMAP_PASSWORD");
             var imapSettings = new IMAPSettings
             {
-                UserName = "frends.tests@outlook.com",
-                Password = passwordFromEnvironment,
-                Host = "outlook.office365.com",
+                UserName = "emwiwi@wp.pl",
+                Password = "tajnehaslo2137",
+                Host = "imap.wp.pl",
                 Port = 993,
                 AcceptAllCerts = true,
                 UseSSL = true,
+                SaveAttachments = true,
+                SavedAttachmentsDirectory = "/home/mike/Projects/_temp"
             };
             var imapOptions = new IMAPOptions
             {
@@ -30,6 +32,7 @@ namespace Frends.IMAP.ReadEmail.Tests
                 GetOnlyUnreadEmails = false,
                 MarkEmailsAsRead = true,
                 MaxEmails = 10,
+                CreateDirectoryIfNotFound = false
             };
             // We expect there to be at least 1 email in the mailbox, otherwise test will fail
             var result = IMAP.ReadEmail(imapSettings, imapOptions);
