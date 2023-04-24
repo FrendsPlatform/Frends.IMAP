@@ -11,6 +11,7 @@ namespace Frends.IMAP.ReadEmail
         /// <summary>
         /// Host address
         /// </summary>
+        /// <example>imap.frends.com</example>
         [DefaultValue("imap.frends.com")]
         [DisplayFormat(DataFormatString = "Text")]
         public string Host { get; set; }
@@ -18,6 +19,7 @@ namespace Frends.IMAP.ReadEmail
         /// <summary>
         /// Host port
         /// </summary>
+        /// <example>993</example>
         [DefaultValue(993)]
         public int Port { get; set; }
 
@@ -28,7 +30,7 @@ namespace Frends.IMAP.ReadEmail
         public bool UseSSL { get; set; }
 
         /// <summary>
-        /// Should the task accept all certificates from IMAP server, including invalid ones?
+        /// Controls whether task will save attachments to designated directory or not
         /// </summary>
         [DefaultValue(false)]
         public bool AcceptAllCerts { get; set; }
@@ -42,9 +44,10 @@ namespace Frends.IMAP.ReadEmail
         /// <summary>
         /// Directory to store all attachments
         /// </summary>
+        /// <example>c:/SavedAttachments</example>
         [DefaultValue("c:/SavedAttachments")]
         [DisplayFormat(DataFormatString = "Text")]
-        public string ArchiveDirectory { get; set; }
+        public string SavedAttachmentsDirectory { get; set; }
 
         /// <summary>
         /// Account name to login with

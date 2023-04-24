@@ -52,35 +52,52 @@ namespace Frends.IMAP.ReadEmail
         }
 
         //method to save attachments into directory
-        private static void SaveAttachments(IMAPSettings settings, List<EmailMessageResult> emails, IDictionary<string, IEnumerable<MimeEntity>> attachments){
-            foreach(var msg in attachments)
-            {
-                if(msg.Value.Any())
-                {
-                    //find message with matching ID
-                    var item = emails.Find(i => i.Id == msg.Key);
-                    var directoryName = $"{settings.SavedAttachmentsDirectory}/{item.Date.ToString("s")}";
-                    Directory.CreateDirectory(directoryName);
-                    
-                    foreach (var attachment in msg.Value) {
-                        var path = GenerateFilePath(attachment, directoryName);
-                        
-                        if (attachment is MessagePart) {
-                            var part = (MessagePart) attachment;
-                            
-                            using (var stream = File.Create (path))
-                                part.Message.WriteTo (stream);
+        private static void SaveAttachments(IMAPSettings settings,IMAPOptions options, List<EmailMessageResult> emails, IDictionary<string, IEnumerable<MimeEntity>> attachments){
+            
+            //check existence of directory
+            bool exist = Directory.Exists(settings.SavedAttachmentsDirectory);
+
+            //if not existing and set to create new, then proceed
+            if(!exist){
+                if(options.CreateDirectoryIfNotFound)
+                    try{
+                        Directory.CreateDirectory(settings.SavedAttachmentsDirectory);
+                    }
+                    catch{
+                        throw;
+                    }
+                else{
+                    throw new System.Exception("Directory not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' for a valid path or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
+                }
+            }
+            //saving attachemnts into designated directory
+            try{
+                foreach(var msg in attachments){
+                    if(msg.Value.Any())
+                    {
+                        //find message with matching ID
+                        var item = emails.Find(i => i.Id == msg.Key);
+                        var directoryName = $"{settings.SavedAttachmentsDirectory}/{item.Date.ToString("s")}";
+                        Directory.CreateDirectory(directoryName);
+                     foreach (var attachment in msg.Value) {
+                            var path = GenerateFilePath(attachment, directoryName);
+                         if (attachment is MessagePart) {
+                                var part = (MessagePart) attachment;
+                             using (var stream = File.Create (path))
+                                    part.Message.WriteTo (stream);
+                            }
+                            else{
+                                var part = (MimePart) attachment;
+                             using (var stream = File.Create (path))
+                                    part.Content.DecodeTo (stream);
+                            }
+                            item.SavedAttachmentsPaths.Add(path);
                         }
-                        else{
-                            var part = (MimePart) attachment;
-                            
-                            using (var stream = File.Create (path))
-                                part.Content.DecodeTo (stream);
-                        }
-                        
-                        item.SavedAttachmentsPaths.Add(path);
                     }
                 }
+            }
+            catch{
+                throw;
             }
         }
 
@@ -144,31 +161,7 @@ namespace Frends.IMAP.ReadEmail
                 // save attachments?
                 if (settings.SaveAttachments)
                 {
-                    //check existence of directory
-                    bool exist = Directory.Exists(settings.SavedAttachmentsDirectory);
-
-                    //if not existing and set to create new, then proceed
-                    if(!exist){
-
-                        if(options.CreateDirectoryIfNotFound)
-                            try{
-                                Directory.CreateDirectory(settings.SavedAttachmentsDirectory);
-                            }
-                            catch{
-                                throw;
-                            }
-                        else{
-                            throw new System.Exception("Directory not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' syntax or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
-                        }
-                    }
-
-                    //saving attachemnts into designated directory
-                    try{
-                        SaveAttachments(settings,result,attachments);
-                    }
-                    catch{
-                        throw;
-                    }
+                   SaveAttachments(settings, options,result, attachments);
                 }
                 
                 // should delete emails?
