@@ -1,11 +1,12 @@
 # Frends.IMAP.ReadEmail
 
+Frends Task for reading emails using IMAP protocol.
+
 [![Frends.IMAP.ReadEmail Main](https://github.com/FrendsPlatform/Frends.IMAP/actions/workflows/ReadEmail_main.yml/badge.svg)](https://github.com/FrendsPlatform/Frends.IMAP/actions/workflows/ReadEmail_main.yml)
 ![MyGet](https://img.shields.io/myget/frends-tasks/v/Frends.IMAP.ReadEmail?label=NuGet)
 ![GitHub](https://img.shields.io/github/license/FrendsPlatform/Frends.IMAP?label=License)
 ![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.IMAP/Frends.IMAP.ReadEmail|main)
 
-Task for reading emails using IMAP protocol.
 
 ## Installing
 
@@ -14,39 +15,39 @@ https://www.myget.org/F/frends-tasks/api/v2.
 
 ## Settings for IMAP servers
 
-|Property                   |Type                       |Description                |Example|
-|---------------------------|---------------------------|---------------------------|---------------|
-|Host                       |string                     |Host address               |imap.frends.com|
-|Port                       |int                        |Host port                  |993|
-|UseSSL                     |bool                       |Use SSL when connecting host|true|
-|AcceptAllCerts             |bool                       |Accept all certificates when connecting the host, if true, will accept event invalid certificates. If false, will accept self-signed certificates if the root is untrusted|false|
-|UserName                   |string                     |Account name to login with|emailUser|
-|Password                   |string                     |Account password          |***|
-|ArchiveDirectory           |string                     |General directory for storing attachments|c:/SavedAttachments|
+|Property                   |Type                       |
+|---------------------------|---------------------------|
+|Host                       |string                     |
+|Port                       |int                        |
+|UseSSL                     |bool                       |
+|AcceptAllCerts             |bool                       |
+|UserName                   |string                     |
+|Password                   |string                     |
+|ArchiveDirectory           |string                     |
 
 ## Options
 
-|Property                   |Type                       |Description                |Example|
-|---------------------------|---------------------------|---------------------------|---------------|
-|MaxEmails                  |int                        |Maximum number of emails to retrieve|10|
-|GetOnlyUnreadEmails        |bool                       |If true, will retrieve only unread emails|false|
-|MarkEmailsAsRead           |bool                       |If true, will mark retrieved emails as read|false|
-|DeleteReadEmails           |bool                       |If true, will delete retrieved emails from server|false|
-|CreateDirectoryIfNotFound  |bool                       |If true, will create new directory for attachments, if not found under "ArchiveDirectory" |false|
+|Property                   |Type                       |
+|---------------------------|---------------------------|
+|MaxEmails                  |int                        |
+|GetOnlyUnreadEmails        |bool                       |
+|MarkEmailsAsRead           |bool                       |
+|DeleteReadEmails           |bool                       |
+|CreateDirectoryIfNotFound  |bool                       |
 
 ## Result
 ReadEmail task returns a list of EmailMessageResult objects. Each object contains following properties:
 
-|Property                   |Type                       |Description                |Example|
-|---------------------------|---------------------------|---------------------------|---------------|
-|Id                         |string                     |Email message id           | ... |
-|To                         |string                     |To field from email        |agent@frends.com|
-|Cc                         |string                     |Cc field from email        |doubleagent@frends.com|
-|From                       |string                     |From field from email      |sender@frends.com|
-|Date                       |DateTime                   |Received date              | ... |
-|Subject                    |string                     |Email subject              |Important email!|
-|BodyText                   |string                     |Plain text email body      | ... |
-|AttachmentSaveDirs         |list<string>               |Listed dirs for saved att. | ... |
+|Property                   |Type                       |
+|---------------------------|---------------------------|
+|Id                         |string                     |
+|To                         |string                     |
+|Cc                         |string                     |
+|From                       |string                     |
+|Date                       |DateTime                   |
+|Subject                    |string                     |
+|BodyText                   |string                     |
+|AttachmentSaveDirs         |List<string>               |
 
 ## Usage
 You can loop email message by giving task result as input to foreach-shape:
