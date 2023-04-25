@@ -75,7 +75,7 @@ namespace Frends.IMAP.ReadEmail
                     }
                     catch
                     {
-                        //throw an error in case for some reason cannot create a directory
+                        //throw an error in case for some reason couldn't create a directory
                         throw;
                     }
                 else
