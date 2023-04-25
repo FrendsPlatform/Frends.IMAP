@@ -44,7 +44,7 @@ namespace Frends.IMAP.ReadEmail
         /// Directory to store all attachments
         /// </summary>
         /// <example>c:/SavedAttachments</example>
-[UIHint(nameof(SaveAttachments),"", true)]
+        [UIHint(nameof(SaveAttachments), "", true)]
         [DefaultValue("c:/SavedAttachments")]
         [DisplayFormat(DataFormatString = "Text")]
         public string SavedAttachmentsDirectory { get; set; }
@@ -53,7 +53,7 @@ namespace Frends.IMAP.ReadEmail
         /// If true, then creates an attachment directory if not existing
         /// </summary>
         /// <example>false</example>
-[UIHint(nameof(SaveAttachments),"", true)]
+        [UIHint(nameof(SaveAttachments), "", true)]
         [DefaultValue(false)]
         public bool CreateDirectoryIfNotFound { get; set; }
     }
