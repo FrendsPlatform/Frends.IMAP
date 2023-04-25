@@ -22,10 +22,7 @@ namespace Frends.IMAP.ReadEmail.Tests
                 Host = "outlook.office365.com",
                 Port = 993,
                 AcceptAllCerts = true,
-                UseSSL = true,
-                SaveAttachments = true,
-                //Getting path to task directory
-                SavedAttachmentsDirectory = $"{System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName}/_temp"
+                UseSSL = true
             };
             var imapOptions = new IMAPOptions
             {
@@ -33,7 +30,10 @@ namespace Frends.IMAP.ReadEmail.Tests
                 GetOnlyUnreadEmails = false,
                 MarkEmailsAsRead = true,
                 MaxEmails = 10,
-                CreateDirectoryIfNotFound = false
+                CreateDirectoryIfNotFound = false,
+                SaveAttachments = true,
+                //Getting path to task directory
+                SavedAttachmentsDirectory = $"{System.IO.Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.Parent.FullName}/_temp"
             };
             // We expect there to be at least 1 email in the mailbox, otherwise test will fail
             var result = IMAP.ReadEmail(imapSettings, imapOptions);

@@ -26,32 +26,21 @@ namespace Frends.IMAP.ReadEmail
         /// <summary>
         /// Use SSL or not
         /// </summary>
+        /// <example>true</example>
         [DefaultValue(true)]
         public bool UseSSL { get; set; }
 
         /// <summary>
         /// Controls whether task will save attachments to designated directory or not
         /// </summary>
+        /// <example>false</example>
         [DefaultValue(false)]
         public bool AcceptAllCerts { get; set; }
 
         /// <summary>
-        /// Should the task save attachments into designated directory?
-        /// </summary>
-        [DefaultValue(false)]
-        public bool SaveAttachments { get; set; }
-
-        /// <summary>
-        /// Directory to store all attachments
-        /// </summary>
-        /// <example>c:/SavedAttachments</example>
-        [DefaultValue("c:/SavedAttachments")]
-        [DisplayFormat(DataFormatString = "Text")]
-        public string SavedAttachmentsDirectory { get; set; }
-
-        /// <summary>
         /// Account name to login with
         /// </summary>
+        /// <example>user</example>
         [DefaultValue("accountName")]
         [DisplayFormat(DataFormatString = "Text")]
         public string UserName { get; set; }
@@ -59,6 +48,7 @@ namespace Frends.IMAP.ReadEmail
         /// <summary>
         /// Account password
         /// </summary>
+        /// <example>***</example>
         [PasswordPropertyText]
         public string Password { get; set; }
     }

@@ -1,12 +1,13 @@
-﻿using MailKit;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MimeKit;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.IO;
-using System.Linq.Expressions;
 
 namespace Frends.IMAP.ReadEmail
 {
@@ -34,69 +35,80 @@ namespace Frends.IMAP.ReadEmail
         /// </returns>
         /// 
 
-        //method to generate file paths
-        private static string GenerateFilePath(MimeEntity attachment, string directoryName){
+        private static string GenerateFilePath(MimeEntity attachment, string directoryName)
+        {
             var directory = $"{directoryName}/";
             var fileName = "";
 
-            if (attachment is MessagePart) {
+            if (attachment is MessagePart)
+            {
                 fileName = attachment.ContentDisposition?.FileName;
-                if (string.IsNullOrEmpty (fileName))
-                    fileName = "attached-message.eml";
+                if (string.IsNullOrEmpty(fileName))
+                    fileName = $"attached-message{Guid.NewGuid()}.eml";
             }
-            else{
-                var part = (MimePart) attachment;
+            else
+            {
+                var part = (MimePart)attachment;
                 fileName = part.FileName;
             }
             return $"{directory}/{fileName}";
         }
 
-        //method to save attachments into directory
-        private static void SaveAttachments(IMAPSettings settings,IMAPOptions options, List<EmailMessageResult> emails, IDictionary<string, IEnumerable<MimeEntity>> attachments){
-            
+        private static void SaveAttachments(string directory, bool createDir, List<EmailMessageResult> emails, IDictionary<string, IEnumerable<MimeEntity>> attachments)
+        {
             //check existence of directory
-            bool exist = Directory.Exists(settings.SavedAttachmentsDirectory);
+            bool exist = Directory.Exists(directory);
 
             //if not existing and set to create new, then proceed
-            if(!exist){
-                if(options.CreateDirectoryIfNotFound)
-                    try{
-                        Directory.CreateDirectory(settings.SavedAttachmentsDirectory);
+            if (!exist)
+            {
+                if (createDir)
+                    try
+                    {
+                        Directory.CreateDirectory(directory);
                     }
-                    catch{
+                    catch
+                    {
                         throw;
                     }
-                else{
-                    throw new System.Exception($"Directory '{settings.SavedAttachmentsDirectory}' not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' for a valid path or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
+                else
+                {
+                    throw new System.Exception($"Directory '{directory}' not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' for a valid path or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
                 }
             }
             //saving attachemnts into designated directory
-            try{
-                foreach(var msg in attachments){
-                    if(msg.Value.Any())
+            try
+            {
+                foreach (var msg in attachments)
+                {
+                    if (msg.Value.Any())
                     {
                         //find message with matching ID
                         var item = emails.Find(i => i.Id == msg.Key);
-                        var directoryName = $"{settings.SavedAttachmentsDirectory}/{item.Date.ToString("s")}";
+                        var directoryName = $"{directory}/{item.Id}";
                         Directory.CreateDirectory(directoryName);
-                     foreach (var attachment in msg.Value) {
+                        foreach (var attachment in msg.Value)
+                        {
                             var path = GenerateFilePath(attachment, directoryName);
-                         if (attachment is MessagePart) {
-                                var part = (MessagePart) attachment;
-                             using (var stream = File.Create (path))
-                                    part.Message.WriteTo (stream);
+                            if (attachment is MessagePart)
+                            {
+                                var part = (MessagePart)attachment;
+                                using (var stream = File.Create(path))
+                                    part.Message.WriteTo(stream);
                             }
-                            else{
-                                var part = (MimePart) attachment;
-                             using (var stream = File.Create (path))
-                                    part.Content.DecodeTo (stream);
+                            else
+                            {
+                                var part = (MimePart)attachment;
+                                using (var stream = File.Create(path))
+                                    part.Content.DecodeTo(stream);
                             }
                             item.SavedAttachmentsPaths.Add(path);
                         }
                     }
                 }
             }
-            catch{
+            catch
+            {
                 throw;
             }
         }
@@ -105,7 +117,7 @@ namespace Frends.IMAP.ReadEmail
         {
             var result = new List<EmailMessageResult>();
             //additional dictionary for attachments, not to modify EmailMessageResult - stores message ID and attachments
-            IDictionary<string,IEnumerable<MimeEntity>> attachments = new Dictionary<string, IEnumerable<MimeEntity>>();
+            IDictionary<string, IEnumerable<MimeEntity>> attachments = new Dictionary<string, IEnumerable<MimeEntity>>();
 
             using (var client = new ImapClient())
             {
@@ -148,7 +160,7 @@ namespace Frends.IMAP.ReadEmail
                         SavedAttachmentsPaths = new List<string>()
                     });
 
-                    if(msg.Attachments.Any())
+                    if (msg.Attachments.Any())
                         attachments.Add(msg.MessageId, msg.Attachments);
 
                     // should mark emails as read?
@@ -159,11 +171,11 @@ namespace Frends.IMAP.ReadEmail
                 }
 
                 // save attachments?
-                if (settings.SaveAttachments)
+                if (options.SaveAttachments)
                 {
-                   SaveAttachments(settings, options,result, attachments);
+                    SaveAttachments(options.SavedAttachmentsDirectory, options.CreateDirectoryIfNotFound, result, attachments);
                 }
-                
+
                 // should delete emails?
                 if (options.DeleteReadEmails && messageIds.Any())
                 {
