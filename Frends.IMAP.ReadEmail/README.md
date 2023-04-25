@@ -13,41 +13,8 @@ Frends Task for reading emails using IMAP protocol.
 You can install the Task via frends UI Task View or you can find the NuGet package from the following NuGet feed
 https://www.myget.org/F/frends-tasks/api/v2.
 
-## Settings for IMAP servers
-
-|Property                   |Type                       |
-|---------------------------|---------------------------|
-|Host                       |string                     |
-|Port                       |int                        |
-|UseSSL                     |bool                       |
-|AcceptAllCerts             |bool                       |
-|UserName                   |string                     |
-|Password                   |string                     |
-|ArchiveDirectory           |string                     |
-
-## Options
-
-|Property                   |Type                       |
-|---------------------------|---------------------------|
-|MaxEmails                  |int                        |
-|GetOnlyUnreadEmails        |bool                       |
-|MarkEmailsAsRead           |bool                       |
-|DeleteReadEmails           |bool                       |
-|CreateDirectoryIfNotFound  |bool                       |
-
 ## Result
-ReadEmail task returns a list of EmailMessageResult objects. Each object contains following properties:
-
-|Property                   |Type                       |
-|---------------------------|---------------------------|
-|Id                         |string                     |
-|To                         |string                     |
-|Cc                         |string                     |
-|From                       |string                     |
-|Date                       |DateTime                   |
-|Subject                    |string                     |
-|BodyText                   |string                     |
-|AttachmentSaveDirs         |List<string>               |
+ReadEmail task returns a list of EmailMessageResult objects.
 
 ## Usage
 You can loop email message by giving task result as input to foreach-shape:
