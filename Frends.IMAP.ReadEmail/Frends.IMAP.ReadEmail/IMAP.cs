@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
@@ -35,9 +34,9 @@ namespace Frends.IMAP.ReadEmail
         /// </returns>
         /// 
 
-        private static string GenerateFilePath(MimeEntity attachment, string directoryName)
+        //method generating path to each attachment file with a valid path to enail's directory 
+        public static string GenerateFilePath(MimeEntity attachment, string attachmentsDirectoryPath)
         {
-            var directory = $"{directoryName}/";
             var fileName = "";
 
             if (attachment is MessagePart)
@@ -51,10 +50,10 @@ namespace Frends.IMAP.ReadEmail
                 var part = (MimePart)attachment;
                 fileName = part.FileName;
             }
-            return $"{directory}/{fileName}";
+            return $"{attachmentsDirectoryPath}/{fileName}";
         }
 
-        private static List<string> SaveMessageAttachments(string directory, bool createDir, MimeMessage message)
+        public static List<string> SaveMessageAttachments(string directory, bool createDir, MimeMessage message)
         {
             var result = new List<string>();
 
