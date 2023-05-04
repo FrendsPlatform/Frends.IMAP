@@ -5,7 +5,7 @@
 ![GitHub](https://img.shields.io/github/license/FrendsPlatform/Frends.IMAP?label=License)
 ![Coverage](https://app-github-custom-badges.azurewebsites.net/Badge?key=FrendsPlatform/Frends.IMAP/Frends.IMAP.ReadEmail|main)
 
-Task for reading emails using IMAP protocol.
+Task for reading emails using IMAP protocol. TEST
 
 ## Installing
 
