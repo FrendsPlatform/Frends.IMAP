@@ -15,7 +15,7 @@ namespace Frends.IMAP.ReadEmail.Tests
         private string _host = "host";
         private string _directory = "c:/_temp";
         //dummy message for testing attachments without access to server
-        private MimeMessage _dummyMessage;
+        private MimeMessage _dummyMessage = new MimeMessage();
 
 
         private MimeMessage PrepareDummyMessage()
@@ -34,12 +34,7 @@ namespace Frends.IMAP.ReadEmail.Tests
             };
 
             //create dummy attachemnt file
-            using (FileStream fs = File.Create(path))
-            {
-                byte[] info = new UTF8Encoding(true).GetBytes("This is some text in the file.");
-                // Add some information to the file.
-                fs.Write(info, 0, info.Length);
-            }
+            File.WriteAllText(path,"This is some text in the file.");
 
             // create an text attachment for the file located at path
             var attachment = new MimePart("text", "txt")

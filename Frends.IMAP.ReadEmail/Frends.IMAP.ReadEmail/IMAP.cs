@@ -56,15 +56,12 @@ namespace Frends.IMAP.ReadEmail
         public static List<string> SaveMessageAttachments(string directory, bool createDir, MimeMessage message)
         {
             var result = new List<string>();
-
-            //if no attachments, just return empty list, avoid creating empty directories
+            
             if (!message.Attachments.Any())
                 return result;
 
-            //check existence of directory
             bool exist = Directory.Exists(directory);
 
-            //if not existing and set to create new, then proceed
             if (!exist)
             {
                 if (createDir)
@@ -159,8 +156,9 @@ namespace Frends.IMAP.ReadEmail
                         From = string.Join(",", msg.From.Select(j => j.ToString())),
                         To = string.Join(",", msg.To.Select(j => j.ToString())),
                         Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
-                        // save attachments?
-                        SavedAttachmentsPaths = options.SaveAttachments ? SaveMessageAttachments(options.SavedAttachmentsDirectory, options.CreateDirectoryIfNotFound, msg) : new List<string>()
+                        SavedAttachmentsPaths = options.SaveAttachments
+                        ? SaveMessageAttachments(options.SavedAttachmentsDirectory, options.CreateDirectoryIfNotFound, msg)
+                        : new List<string>()
                     });
 
                     // should mark emails as read?
