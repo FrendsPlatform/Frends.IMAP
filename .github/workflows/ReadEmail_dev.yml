@@ -1,6 +1,7 @@
 name: Frends.IMAP.ReadEmail Test
 
 on:
+  pull_request:
   push:
     branches-ignore:
       - main
