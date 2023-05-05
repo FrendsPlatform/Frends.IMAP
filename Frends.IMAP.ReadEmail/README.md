@@ -13,20 +13,6 @@ Frends Task for reading emails using IMAP protocol.
 You can install the Task via frends UI Task View or you can find the NuGet package from the following NuGet feed
 https://www.myget.org/F/frends-tasks/api/v2.
 
-## Result
-ReadEmail task returns a list of EmailMessageResult objects.
-
-## Usage
-You can loop email message by giving task result as input to foreach-shape:
-```sh
-#result[ReadEmail]
-```
-
-You can reference email properties like so:
-```sh
-#result[ReadEmail][0].BodyText
-```
-
 ## Building
 
 Clone a copy of the repository
