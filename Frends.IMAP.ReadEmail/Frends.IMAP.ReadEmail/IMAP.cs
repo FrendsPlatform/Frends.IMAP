@@ -56,7 +56,7 @@ namespace Frends.IMAP.ReadEmail
         public static List<string> SaveMessageAttachments(string directory, bool createDir, MimeMessage message)
         {
             var result = new List<string>();
-            
+
             if (!message.Attachments.Any())
                 return result;
 
@@ -81,36 +81,29 @@ namespace Frends.IMAP.ReadEmail
                 }
             }
 
-            //saving attachemnts into designated directory
-            try
-            {
-                //local path to each email directory
-                var directoryName = $"{directory}/{message.MessageId}";
-                Directory.CreateDirectory(directoryName);
+            //--- saving attachemnts into designated directory
+            //local path to each email directory
+            var directoryName = $"{directory}/{message.MessageId}";
+            Directory.CreateDirectory(directoryName);
 
-                foreach (var attachment in message.Attachments)
+            foreach (var attachment in message.Attachments)
+            {
+                var path = GenerateFilePath(attachment, directoryName);
+                if (attachment is MessagePart)
                 {
-                    var path = GenerateFilePath(attachment, directoryName);
-                    if (attachment is MessagePart)
-                    {
-                        var part = (MessagePart)attachment;
-                        using (var stream = File.Create(path))
-                            part.Message.WriteTo(stream);
-                    }
-                    else
-                    {
-                        var part = (MimePart)attachment;
-                        using (var stream = File.Create(path))
-                            part.Content.DecodeTo(stream);
-                    }
-                    result.Add(path);
+                    var part = (MessagePart)attachment;
+                    using (var stream = File.Create(path))
+                        part.Message.WriteTo(stream);
                 }
-
+                else
+                {
+                    var part = (MimePart)attachment;
+                    using (var stream = File.Create(path))
+                        part.Content.DecodeTo(stream);
+                }
+                result.Add(path);
             }
-            catch
-            {
-                throw;
-            }
+            //--- saving attachemnts into designated directory
 
             return result;
         }

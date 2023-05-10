@@ -14,7 +14,6 @@ You can install the Task via frends UI Task View or you can find the NuGet packa
 https://www.myget.org/F/frends-tasks/api/v2.
 
 ## Building
-
 Clone a copy of the repository
 
 `git clone https://github.com/FrendsPlatform/Frends.Regex.git`

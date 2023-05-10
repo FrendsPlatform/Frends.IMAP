@@ -34,7 +34,7 @@ namespace Frends.IMAP.ReadEmail.Tests
             };
 
             //create dummy attachemnt file
-            File.WriteAllText(path,"This is some text in the file.");
+            File.WriteAllText(path, "This is some text in the file.");
 
             // create an text attachment for the file located at path
             var attachment = new MimePart("text", "txt")
