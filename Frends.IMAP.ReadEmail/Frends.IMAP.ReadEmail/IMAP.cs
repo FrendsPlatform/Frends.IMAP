@@ -1,10 +1,12 @@
-﻿using MailKit;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MimeKit;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 
 namespace Frends.IMAP.ReadEmail
 {
@@ -27,9 +29,84 @@ namespace Frends.IMAP.ReadEmail
         /// string Subject.
         /// string BodyText.
         /// string BodyHtml.
+        /// List<string> AttachmentSaveDirs.
         /// }
         /// </returns>
         /// 
+
+        //method generating path to each attachment file with a valid path to enail's directory 
+        public static string GenerateFilePath(MimeEntity attachment, string attachmentsDirectoryPath)
+        {
+            var fileName = "";
+
+            if (attachment is MessagePart)
+            {
+                fileName = attachment.ContentDisposition?.FileName;
+                if (string.IsNullOrEmpty(fileName))
+                    fileName = $"attached-message{Guid.NewGuid()}.eml";
+            }
+            else
+            {
+                var part = (MimePart)attachment;
+                fileName = part.FileName;
+            }
+            return $"{attachmentsDirectoryPath}/{fileName}";
+        }
+
+        public static List<string> SaveMessageAttachments(string directory, bool createDir, MimeMessage message)
+        {
+            var result = new List<string>();
+
+            if (!message.Attachments.Any())
+                return result;
+
+            bool exist = Directory.Exists(directory);
+
+            if (!exist)
+            {
+                if (createDir)
+                    try
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+                    catch
+                    {
+                        //throw an error in case for some reason couldn't create a directory
+                        throw;
+                    }
+                else
+                {
+                    //throw exception if directory not found, and autocreation is turned off
+                    throw new InvalidOperationException($"Directory '{directory}' not found, and automatic creation is disabled. Check 'IMAPSettings.SavedAttachmentsDirectory' for a valid path or consider enabling 'IMAPOptions.CreateDirectoryIfNotFound'");
+                }
+            }
+
+            //--- saving attachemnts into designated directory
+            //local path to each email directory
+            var directoryName = $"{directory}/{message.MessageId}";
+            Directory.CreateDirectory(directoryName);
+
+            foreach (var attachment in message.Attachments)
+            {
+                var path = GenerateFilePath(attachment, directoryName);
+                if (attachment is MessagePart)
+                {
+                    var part = (MessagePart)attachment;
+                    using (var stream = File.Create(path))
+                        part.Message.WriteTo(stream);
+                }
+                else
+                {
+                    var part = (MimePart)attachment;
+                    using (var stream = File.Create(path))
+                        part.Content.DecodeTo(stream);
+                }
+                result.Add(path);
+            }
+            //--- saving attachemnts into designated directory
+
+            return result;
+        }
 
         public static List<EmailMessageResult> ReadEmail([PropertyTab] IMAPSettings settings, [PropertyTab] IMAPOptions options)
         {
@@ -61,6 +138,7 @@ namespace Frends.IMAP.ReadEmail
                 for (int i = 0; i < messageIds.Count && i < options.MaxEmails; i++)
                 {
                     MimeMessage msg = inbox.GetMessage(messageIds[i]);
+
                     result.Add(new EmailMessageResult
                     {
                         Id = msg.MessageId,
@@ -70,7 +148,10 @@ namespace Frends.IMAP.ReadEmail
                         BodyHtml = msg.HtmlBody,
                         From = string.Join(",", msg.From.Select(j => j.ToString())),
                         To = string.Join(",", msg.To.Select(j => j.ToString())),
-                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString()))
+                        Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
+                        SavedAttachmentsPaths = options.SaveAttachments
+                        ? SaveMessageAttachments(options.SavedAttachmentsDirectory, options.CreateDirectoryIfNotFound, msg)
+                        : new List<string>()
                     });
 
                     // should mark emails as read?
