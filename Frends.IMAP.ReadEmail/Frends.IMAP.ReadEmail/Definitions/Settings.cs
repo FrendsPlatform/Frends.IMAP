@@ -6,7 +6,7 @@ namespace Frends.IMAP.ReadEmail.Definitions;
 /// <summary>
 /// Settings for IMAP and POP3 servers
 /// </summary>
-public class IMAPSettings
+public class Settings
 {
     /// <summary>
     /// Host address

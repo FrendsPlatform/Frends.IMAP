@@ -6,7 +6,7 @@ namespace Frends.IMAP.ReadEmail.Definitions;
 /// <summary>
 /// Options related to IMAP reading
 /// </summary>
-public class IMAPOptions
+public class Options
 {
     /// <summary>
     /// Maximum number of emails to retrieve

@@ -11,6 +11,9 @@ using Frends.IMAP.ReadEmail.Definitions;
 
 namespace Frends.IMAP.ReadEmail;
 
+/// <summary>
+/// Frends task, that allows to read emails from IMAP server.
+/// </summary>
 public class IMAP
 {
     /// <summary>
@@ -30,7 +33,7 @@ public class IMAP
     /// <returns>
     /// object 
     /// {
-    ///     List&lt;EmailMessageResult&gt; Emails
+    ///     List&lt;EmailMessage&gt; Emails
     ///     {
     ///         string Id,
     ///         string To,
@@ -45,10 +48,10 @@ public class IMAP
     /// }
     /// </returns>
     public static Result ReadEmail(
-        [PropertyTab] IMAPSettings settings,
-        [PropertyTab] IMAPOptions options)
+        [PropertyTab] Settings settings,
+        [PropertyTab] Options options)
     {
-        var result = new List<EmailMessageResult>();
+        var result = new List<EmailMessage>();
         using var client = new ImapClient();
 
         // Accept all certs?
@@ -84,7 +87,7 @@ public class IMAP
                     msg);
             }
 
-            result.Add(new EmailMessageResult
+            result.Add(new EmailMessage
             {
                 Id = msg.MessageId,
                 Date = msg.Date.DateTime,

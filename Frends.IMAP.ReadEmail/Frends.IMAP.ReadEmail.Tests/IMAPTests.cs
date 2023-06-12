@@ -21,7 +21,7 @@ public class IMAPTests
     private MimeMessage PrepareDummyMessage()
     {
         var message = new MimeMessage();
-        var path = $"./test.txt";
+        var path = Path.GetTempFileName();
 
         message.From.Add(new MailboxAddress("Frend1", "frend1@frends.com"));
         message.To.Add(new MailboxAddress("Frend2", "frend2@frends.com"));
@@ -29,18 +29,20 @@ public class IMAPTests
         message.MessageId = "2137";
         var body = new TextPart("plain")
         {
-            Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+            Text = @"Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
+            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+            nisi ut aliquip ex ea commodo consequat."
         };
 
         // Create dummy attachemnt file
-        File.WriteAllText(path, "This is some text in the file.");
+        var stream = new MemoryStream(
+            Encoding.UTF8.GetBytes("This is some text in the file."));
 
         // Create an text attachment for the file located at path
-        using var fs = File.OpenRead(path);
         var attachment = new MimePart("text", "txt")
         {
-            Content = new MimeContent(fs, ContentEncoding.Default),
+            Content = new MimeContent(stream, ContentEncoding.Default),
             ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
             ContentTransferEncoding = ContentEncoding.Base64,
             FileName = Path.GetFileName(path)
@@ -77,7 +79,7 @@ public class IMAPTests
     [Test]
     public void ReadEmailTest()
     {
-        var imapSettings = new IMAPSettings
+        var imapSettings = new Settings
         {
             UserName = _user,
             Password = _password,
@@ -86,7 +88,7 @@ public class IMAPTests
             AcceptAllCerts = true,
             UseSSL = true
         };
-        var imapOptions = new IMAPOptions
+        var imapOptions = new Options
         {
             DeleteReadEmails = false,
             GetOnlyUnreadEmails = false,
@@ -94,7 +96,8 @@ public class IMAPTests
             MaxEmails = 10,
             SaveAttachments = false,
         };
-        // We expect there to be at least 1 email in the mailbox, otherwise test will fail
+        // We expect there to be at least 1 email in the mailbox
+        // otherwise test will fail
         var result = IMAP.ReadEmail(imapSettings, imapOptions);
         Assert.Greater(result.Emails.Count, 0);
         Assert.IsTrue(result.Emails[0].From.Length > 0);
@@ -123,7 +126,9 @@ public class IMAPTests
     [Test]
     public void GenerateFilePathTest()
     {
-        var dir = IMAP.GenerateAttachmentFilePath(_dummyMessage.Attachments.First(), $"{_directory}/{_dummyMessage.MessageId}");
+        var dir = IMAP.GenerateAttachmentFilePath(
+            _dummyMessage.Attachments.First(),
+            $"{_directory}/{_dummyMessage.MessageId}");
         Assert.IsTrue(dir.Length > 0);
     }
 }

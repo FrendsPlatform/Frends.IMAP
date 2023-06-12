@@ -12,9 +12,9 @@ public class Result
     /// <summary>
     /// List of emails that were retrieved.
     /// </summary>
-    public List<EmailMessageResult> Emails { get; private set; }
+    public List<EmailMessage> Emails { get; private set; }
 
-    internal Result(List<EmailMessageResult> emails)
+    internal Result(List<EmailMessage> emails)
     {
         Emails = emails;
     }
