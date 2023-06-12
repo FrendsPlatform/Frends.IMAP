@@ -57,7 +57,7 @@ public class IMAP
         // Accept all certs?
         if (settings.AcceptAllCerts)
         {
-            client.ServerCertificateValidationCallback = 
+            client.ServerCertificateValidationCallback =
                 (s, x509certificate, x590chain, sslPolicyErrors) => true;
         }
 
@@ -115,7 +115,7 @@ public class IMAP
         }
 
         client.Disconnect(true);
-    
+
         return new Result(result);
     }
 
@@ -160,7 +160,7 @@ public class IMAP
                 throw new InvalidOperationException(
                     $"Directory '{directory}' not found, and automatic " +
                     "creation is disabled. Check 'SavedAttachmentsDirectory' " +
-                    "for a valid path or consider enabling " + 
+                    "for a valid path or consider enabling " +
                     "'CreateDirectoryIfNotFound'");
             }
         }
