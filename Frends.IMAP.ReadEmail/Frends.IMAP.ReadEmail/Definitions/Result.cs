@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 
 namespace Frends.IMAP.ReadEmail.Definitions;

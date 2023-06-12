@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualBasic.FileIO;
 using MimeKit;
 using NUnit.Framework;
 using Frends.IMAP.ReadEmail.Definitions;
+using DateTime = System.DateTime;
 
 namespace Frends.IMAP.ReadEmail.Tests;
 public class IMAPTests
@@ -70,7 +70,7 @@ public class IMAPTests
         // Setting for this integration test are taken from Confluence
         var passwordFromEnvironment = Environment.GetEnvironmentVariable("IMAP_PASSWORD");
         _user = "frends.tests@outlook.com";
-        _password = passwordFromEnvironment != null ? passwordFromEnvironment : "f!yd7E/8FA/Fc1";
+        _password = passwordFromEnvironment != null ? passwordFromEnvironment : "password";
         _host = "outlook.office365.com";
         _directory = $"./../../../../_temp";
         _dummyMessage = PrepareDummyMessage();
@@ -95,11 +95,17 @@ public class IMAPTests
             MarkEmailsAsRead = true,
             MaxEmails = 10,
             SaveAttachments = false,
+            CreateDirectoryIfNotFound = true,
+            SavedAttachmentsDirectory = "dummy"
         };
         // We expect there to be at least 1 email in the mailbox
         // otherwise test will fail
         var result = IMAP.ReadEmail(imapSettings, imapOptions);
         Assert.Greater(result.Emails.Count, 0);
+        Assert.IsTrue(result.Emails[0].Id.Length > 0);
+        Assert.IsNotNull(result.Emails[0].Cc);
+        Assert.IsNotNull(result.Emails[0].Date);
+        Assert.AreNotEqual(result.Emails[0].Date, default(DateTime));
         Assert.IsTrue(result.Emails[0].From.Length > 0);
         Assert.IsTrue(result.Emails[0].To.Length > 0);
         Assert.IsTrue(result.Emails[0].Subject.Length > 0);
