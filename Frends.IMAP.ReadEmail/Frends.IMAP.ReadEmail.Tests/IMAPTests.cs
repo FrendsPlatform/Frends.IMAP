@@ -70,7 +70,7 @@ public class IMAPTests
         // Setting for this integration test are taken from Confluence
         var passwordFromEnvironment = Environment.GetEnvironmentVariable("IMAP_PASSWORD");
         _user = "frends.tests@outlook.com";
-        _password = passwordFromEnvironment != null ? passwordFromEnvironment : "password";
+        _password = passwordFromEnvironment ?? "password";
         _host = "outlook.office365.com";
         _directory = $"./../../../../_temp";
         _dummyMessage = PrepareDummyMessage();
@@ -116,7 +116,8 @@ public class IMAPTests
     public void SaveAttachmentsTest()
     {
         Directory.CreateDirectory(_directory);
-        var dir = IMAP.SaveMessageAttachments(_directory, false, _dummyMessage).First();
+        var dir = IMAP.SaveMessageAttachments(
+            _directory, false, _dummyMessage).First();
         Assert.IsTrue(File.Exists(dir));
         Directory.Delete(_directory, true);
     }
@@ -124,17 +125,29 @@ public class IMAPTests
     [Test]
     public void SaveAttachmentsAutocreateTest()
     {
-        var dir = IMAP.SaveMessageAttachments(_directory, true, _dummyMessage).First();
+        var dir = IMAP.SaveMessageAttachments(
+            _directory, true, _dummyMessage).First();
         Assert.IsTrue(File.Exists(dir));
         Directory.Delete(_directory, true);
     }
 
     [Test]
-    public void GenerateFilePathTest()
+    public void GenerateAttachmentFilePathTest()
     {
-        var dir = IMAP.GenerateAttachmentFilePath(
-            _dummyMessage.Attachments.First(),
-            $"{_directory}/{_dummyMessage.MessageId}");
-        Assert.IsTrue(dir.Length > 0);
+        var attachment = _dummyMessage.Attachments.First();
+        var basePath = $"{_directory}/{_dummyMessage.MessageId}";
+        var filePath = IMAP.GenerateAttachmentFilePath(attachment, basePath);
+        Assert.AreEqual(
+            $"{basePath}/{((MimePart)attachment).FileName}",
+            filePath);
+    }
+
+    [Test]
+    public void GenerateAttachmentFilePath_MessagePart()
+    {
+        var messagePart = new MessagePart();
+        var basePath = $"{_directory}/{_dummyMessage.MessageId}";
+        var filePath = IMAP.GenerateAttachmentFilePath(messagePart, basePath);
+        Assert.IsTrue(filePath.StartsWith($"{basePath}/attached-message"));
     }
 }
