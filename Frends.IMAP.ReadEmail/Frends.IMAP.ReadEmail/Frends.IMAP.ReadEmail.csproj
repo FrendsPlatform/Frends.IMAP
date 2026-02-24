@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>Frends</Authors>
     <Copyright>Frends</Copyright>
     <Company>Frends</Company>
@@ -19,5 +19,12 @@
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.8" />
     <PackageReference Include="System.ComponentModel" Version="4.3.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<Content Include="FrendsTaskMetadata.json"
+				Pack="true"
+				PackagePath="/"
+				CopyToOutputDirectory="PreserveNewest" />
+	<AdditionalFiles Include="FrendsTaskMetadata.json" />	
   </ItemGroup>
 </Project>
