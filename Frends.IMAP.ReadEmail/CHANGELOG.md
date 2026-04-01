@@ -1,4 +1,9 @@
 # Changelog
+
+## [2.1.0] - 2026-02-23
+### Fixed
+- Ensure FrendsTaskMetadata.json is included in NuGet package
+
 ## [2.0.0] - 2023-06-12
 ### Fixed
 - Fixed task not handling attachments at all (#3).
