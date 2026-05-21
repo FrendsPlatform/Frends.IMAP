@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.0] - 2026-05-21
+### Fixed
+- Ensure to delete only emails flagged as Read
+
 ## [2.1.0] - 2026-02-23
 ### Fixed
 - Ensure FrendsTaskMetadata.json is included in NuGet package

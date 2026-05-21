@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Authors>Frends</Authors>
     <Copyright>Frends</Copyright>
     <Company>Frends</Company>
@@ -25,6 +25,6 @@
 				Pack="true"
 				PackagePath="/"
 				CopyToOutputDirectory="PreserveNewest" />
-	<AdditionalFiles Include="FrendsTaskMetadata.json" />	
+	<AdditionalFiles Include="FrendsTaskMetadata.json" />
   </ItemGroup>
 </Project>
