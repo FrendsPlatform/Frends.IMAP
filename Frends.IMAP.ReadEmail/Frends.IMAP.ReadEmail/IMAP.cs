@@ -14,11 +14,11 @@ namespace Frends.IMAP.ReadEmail;
 /// <summary>
 /// Frends task, that allows to read emails from IMAP server.
 /// </summary>
-public class IMAP
+public static class IMAP
 {
     /// <summary>
-    /// Frends task, that allows to read emails from IMAP server and 
-    /// optionally save attachments to designated directory. The result of 
+    /// Frends task, that allows to read emails from IMAP server and
+    /// optionally save attachments to designated directory. The result of
     /// the task contains a list of emails objects with message details
     /// and a list of saved attachment paths.
     ///
@@ -31,7 +31,7 @@ public class IMAP
     /// <param name="settings">IMAP server settings</param>
     /// <param name="options">Email options</param>
     /// <returns>
-    /// object 
+    /// object
     /// {
     ///     List&lt;EmailMessage&gt; Emails
     ///     {
@@ -58,7 +58,7 @@ public class IMAP
         if (settings.AcceptAllCerts)
         {
             client.ServerCertificateValidationCallback =
-                (s, x509certificate, x590chain, sslPolicyErrors) => true;
+                (_, _, _, _) => true;
         }
 
         client.Connect(settings.Host, settings.Port, settings.UseSSL);
@@ -72,13 +72,14 @@ public class IMAP
             ? inbox.Search(SearchQuery.NotSeen)
             : inbox.Search(SearchQuery.All);
 
-        // Read as many as there are unread emails or as many as defined in 
+        // Read as many as there are unread emails or as many as defined in
         // options.MaxEmails.
         for (int i = 0; i < messageIds.Count && i < options.MaxEmails; i++)
         {
             MimeMessage msg = inbox.GetMessage(messageIds[i]);
 
             var savedAttachmentPaths = new List<string>();
+
             if (options.SaveAttachments)
             {
                 savedAttachmentPaths = SaveMessageAttachments(
@@ -101,19 +102,17 @@ public class IMAP
             });
 
             // Should mark emails as read?
-            if (!options.DeleteReadEmails && options.MarkEmailsAsRead)
+            if (!options.MarkEmailsAsRead) continue;
+            inbox.AddFlags(messageIds[i], MessageFlags.Seen, true);
+
+            // Should delete read emails?
+            if (options.DeleteReadEmails)
             {
-                inbox.AddFlags(messageIds[i], MessageFlags.Seen, true);
+                inbox.AddFlags(messageIds[i], MessageFlags.Deleted, false);
             }
         }
 
-        // Should delete emails?
-        if (options.DeleteReadEmails && messageIds.Any())
-        {
-            inbox.AddFlags(messageIds, MessageFlags.Deleted, false);
-            inbox.Expunge();
-        }
-
+        inbox.Expunge();
         client.Disconnect(true);
 
         return new Result(result);
@@ -123,7 +122,7 @@ public class IMAP
         MimeEntity attachment,
         string attachmentsDirectoryPath)
     {
-        var fileName = "";
+        string fileName;
 
         if (attachment is MessagePart)
         {
@@ -136,6 +135,7 @@ public class IMAP
             var part = (MimePart)attachment;
             fileName = part.FileName;
         }
+
         return $"{attachmentsDirectoryPath}/{fileName}";
     }
 
@@ -172,6 +172,7 @@ public class IMAP
         foreach (var attachment in message.Attachments)
         {
             var path = GenerateAttachmentFilePath(attachment, directoryName);
+
             if (attachment is MessagePart)
             {
                 var part = (MessagePart)attachment;
@@ -184,6 +185,7 @@ public class IMAP
                 using (var stream = File.Create(path))
                     part.Content.DecodeTo(stream);
             }
+
             result.Add(path);
         }
 

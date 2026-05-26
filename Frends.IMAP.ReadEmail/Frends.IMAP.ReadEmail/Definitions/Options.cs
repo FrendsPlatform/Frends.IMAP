@@ -28,7 +28,8 @@ public class Options
     public bool MarkEmailsAsRead { get; set; }
 
     /// <summary>
-    /// If true, then received emails will be hard deleted
+    /// If true, then received, read emails will be hard deleted.
+    /// Note: If MarkEmailsAsRead is false, then this option will delete only those emails that were already read.
     /// </summary>
     /// <example>false</example>
     public bool DeleteReadEmails { get; set; }
