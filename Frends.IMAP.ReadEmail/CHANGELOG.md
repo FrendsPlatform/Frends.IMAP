@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.0] - 2026-10-02
+### Changed
+- Upgraded project to target .NET 8
+
 ## [2.2.0] - 2026-05-21
 ### Fixed
 - Ensure to delete only emails flagged as Read
