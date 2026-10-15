@@ -78,6 +78,7 @@ public class IMAPTests
     }
 
     [Test]
+    [Explicit("Requires a live IMAP account that permits password-based LOGIN.")]
     public void ReadEmailTest()
     {
         if (!string.Equals(
