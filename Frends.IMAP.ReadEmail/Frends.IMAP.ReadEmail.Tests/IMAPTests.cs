@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -162,5 +163,102 @@ public class IMAPTests
         var basePath = $"{_directory}/{_dummyMessage.MessageId}";
         var filePath = IMAP.GenerateAttachmentFilePath(messagePart, basePath);
         Assert.IsTrue(filePath.StartsWith($"{basePath}/attached-message"));
+    }
+
+    [Test]
+    public void ReadEmail_ReadsMessagesFromServer()
+    {
+        var raw = "From: a@frends.com\r\nTo: b@frends.com\r\nCc: c@frends.com\r\nSubject: Hello\r\n" +
+                  "Message-Id: <1@frends.com>\r\nDate: Mon, 1 Jan 2024 10:00:00 +0000\r\n\r\nBody text\r\n";
+        using var server = new FakeImapServer(new List<string> { raw, raw });
+        var connection = new Connection
+        {
+            UserName = "user",
+            Password = "password",
+            Host = "127.0.0.1",
+            Port = server.Port,
+            UseSSL = false,
+        };
+        var input = new Input { MaxEmails = 1, GetOnlyUnreadEmails = true };
+        var options = new Options { MarkEmailsAsRead = true, DeleteReadEmails = true };
+
+        var result = IMAP.ReadEmail(input, connection, options, CancellationToken.None);
+
+        Assert.IsTrue(result.Success);
+        Assert.AreEqual(1, result.Emails.Count);
+        Assert.AreEqual("Hello", result.Emails[0].Subject);
+        Assert.IsTrue(result.Emails[0].BodyText.Contains("Body text"));
+        Assert.IsTrue(result.Emails[0].From.Contains("a@frends.com"));
+        Assert.IsTrue(result.Emails[0].To.Contains("b@frends.com"));
+        Assert.IsTrue(result.Emails[0].Cc.Contains("c@frends.com"));
+    }
+
+    [Test]
+    public void ReadEmail_SavesAttachments()
+    {
+        var raw = "From: a@frends.com\r\nTo: b@frends.com\r\nSubject: Att\r\nMessage-Id: <2@frends.com>\r\n" +
+                  "MIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"b\"\r\n\r\n" +
+                  "--b\r\nContent-Type: text/plain\r\n\r\nHi\r\n" +
+                  "--b\r\nContent-Type: text/plain; name=\"a.txt\"\r\nContent-Disposition: attachment; filename=\"a.txt\"\r\n\r\ndata\r\n" +
+                  "--b--\r\n";
+        using var server = new FakeImapServer(new List<string> { raw });
+        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        try
+        {
+            var connection = new Connection
+            {
+                UserName = "user",
+                Password = "password",
+                Host = "127.0.0.1",
+                Port = server.Port,
+                UseSSL = false,
+                AcceptAllCerts = true,
+            };
+            var options = new Options
+            {
+                SaveAttachments = true,
+                CreateDirectoryIfNotFound = true,
+                SavedAttachmentsDirectory = dir,
+            };
+
+            var result = IMAP.ReadEmail(new Input { MaxEmails = 5 }, connection, options, CancellationToken.None);
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(1, result.Emails[0].SavedAttachmentsPaths.Count);
+            Assert.IsTrue(File.Exists(result.Emails[0].SavedAttachmentsPaths[0]));
+        }
+        finally
+        {
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+        }
+    }
+
+    [Test]
+    public void SaveAttachments_ThrowsWhenDirectoryMissingAndAutocreateDisabled()
+    {
+        var missing = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Assert.Throws<InvalidOperationException>(() =>
+            IMAP.SaveMessageAttachments(missing, false, _dummyMessage));
+    }
+
+    [Test]
+    public void SaveAttachments_SavesAttachedMessage()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        try
+        {
+            var message = new MimeMessage { MessageId = "msg" };
+            var multipart = new Multipart("mixed");
+            multipart.Add(new TextPart("plain") { Text = "text" });
+            multipart.Add(new MessagePart { Message = _dummyMessage, ContentDisposition = new ContentDisposition(ContentDisposition.Attachment) });
+            message.Body = multipart;
+            var paths = IMAP.SaveMessageAttachments(dir, true, message);
+            Assert.AreEqual(1, paths.Count);
+            Assert.IsTrue(File.Exists(paths[0]));
+        }
+        finally
+        {
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+        }
     }
 }
