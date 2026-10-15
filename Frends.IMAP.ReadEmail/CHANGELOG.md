@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.0] - 2026-10-15
+### Changed
+- Breaking: The Task now takes `Input`, `Connection` and `Options` parameters (`Settings` was renamed to `Connection`), and `MaxEmails` and `GetOnlyUnreadEmails` moved from `Options` to `Input`. Existing processes need to be reconfigured.
+- The result now contains `Success` and `Error` properties.
+- The Task can now be cancelled.
+
+### Added
+- `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options to control how failures are reported.
+- Examples added to the result documentation.
+
 ## [2.3.0] - 2026-10-02
 ### Changed
 - Upgraded project to target .NET 8

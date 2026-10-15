@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using MimeKit;
 using NUnit.Framework;
 using Frends.IMAP.ReadEmail.Definitions;
@@ -79,7 +80,7 @@ public class IMAPTests
     [Test]
     public void ReadEmailTest()
     {
-        var imapSettings = new Settings
+        var imapConnection = new Connection
         {
             UserName = _user,
             Password = _password,
@@ -88,19 +89,22 @@ public class IMAPTests
             AcceptAllCerts = true,
             UseSSL = true
         };
+        var imapInput = new Input
+        {
+            GetOnlyUnreadEmails = false,
+            MaxEmails = 10,
+        };
         var imapOptions = new Options
         {
             DeleteReadEmails = false,
-            GetOnlyUnreadEmails = false,
             MarkEmailsAsRead = true,
-            MaxEmails = 10,
             SaveAttachments = false,
             CreateDirectoryIfNotFound = true,
             SavedAttachmentsDirectory = "dummy"
         };
         // We expect there to be at least 1 email in the mailbox
         // otherwise test will fail
-        var result = IMAP.ReadEmail(imapSettings, imapOptions);
+        var result = IMAP.ReadEmail(imapInput, imapConnection, imapOptions, CancellationToken.None);
         Assert.Greater(result.Emails.Count, 0);
         Assert.IsTrue(result.Emails[0].Id.Length > 0);
         Assert.IsNotNull(result.Emails[0].Cc);
