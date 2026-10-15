@@ -80,6 +80,14 @@ public class IMAPTests
     [Test]
     public void ReadEmailTest()
     {
+        if (!string.Equals(
+                Environment.GetEnvironmentVariable("IMAP_INTEGRATION_TESTS"),
+                "true",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            Assert.Ignore("Set IMAP_INTEGRATION_TESTS=true to run this integration test.");
+        }
+
         var imapConnection = new Connection
         {
             UserName = _user,
