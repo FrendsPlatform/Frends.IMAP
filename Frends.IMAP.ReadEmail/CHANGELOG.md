@@ -2,9 +2,8 @@
 
 ## [3.0.0] - 2026-10-15
 ### Changed
-- Breaking: The Task now takes `Input`, `Connection` and `Options` parameters (`Settings` was renamed to `Connection`), and `MaxEmails` and `GetOnlyUnreadEmails` moved from `Options` to `Input`. Existing processes need to be reconfigured.
+- [Breaking Change] The Task now takes `Input`, `Connection` and `Options` parameters (`Settings` was renamed to `Connection`), and `MaxEmails` and `GetOnlyUnreadEmails` moved from `Options` to `Input`.
 - The result now contains `Success` and `Error` properties.
-- The Task can now be cancelled.
 
 ### Added
 - `ThrowErrorOnFailure` and `ErrorMessageOnFailure` options to control how failures are reported.
