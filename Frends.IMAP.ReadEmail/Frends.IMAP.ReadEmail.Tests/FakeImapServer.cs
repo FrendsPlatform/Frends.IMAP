@@ -64,7 +64,7 @@ internal sealed class FakeImapServer : IDisposable
         using (var writer = new StreamWriter(stream, new UTF8Encoding(false)) { NewLine = "\r\n", AutoFlush = true })
         {
             await writer.WriteLineAsync("* OK IMAP4rev1 ready");
-            string line;
+            string? line;
             while ((line = await reader.ReadLineAsync()) != null)
             {
                 lock (Commands) Commands.Add(line);

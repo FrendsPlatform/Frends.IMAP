@@ -48,7 +48,6 @@ internal class ErrorHandlerTest
         options.ErrorMessageOnFailure = CustomErrorMessage;
         var ex = Assert.Throws<Exception>(() =>
             IMAP.ReadEmail(DefaultInput(), DefaultConnection(), options, CancellationToken.None));
-        Assert.That(ex, Is.Not.Null);
-        Assert.That(ex.Message, Contains.Substring(CustomErrorMessage));
+        Assert.That(ex, Has.Message.Contains(CustomErrorMessage));
     }
 }

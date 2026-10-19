@@ -4,12 +4,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using Frends.IMAP.ReadEmail.Definitions;
+using Frends.IMAP.ReadEmail.Helpers;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MimeKit;
-using Frends.IMAP.ReadEmail.Definitions;
-using Frends.IMAP.ReadEmail.Helpers;
 
 namespace Frends.IMAP.ReadEmail;
 
@@ -111,7 +111,7 @@ public static class IMAP
                     From = string.Join(",", msg.From.Select(j => j.ToString())),
                     To = string.Join(",", msg.To.Select(j => j.ToString())),
                     Cc = string.Join(",", msg.Cc.Select(j => j.ToString())),
-                    SavedAttachmentsPaths = savedAttachmentPaths
+                    SavedAttachmentsPaths = savedAttachmentPaths,
                 });
 
                 // Should mark emails as read?
@@ -163,14 +163,18 @@ public static class IMAP
         var result = new List<string>();
 
         if (!message.Attachments.Any())
+        {
             return result;
+        }
 
         bool directoryExists = Directory.Exists(directory);
 
         if (!directoryExists)
         {
             if (createDir)
+            {
                 Directory.CreateDirectory(directory);
+            }
             else
             {
                 // Throw exception if directory not found,

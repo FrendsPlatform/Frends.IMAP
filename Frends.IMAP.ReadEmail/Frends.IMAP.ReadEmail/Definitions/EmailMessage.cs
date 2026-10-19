@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Frends.IMAP.ReadEmail.Definitions;
+
 /// <summary>
 /// Output result for read operation
 /// </summary>
