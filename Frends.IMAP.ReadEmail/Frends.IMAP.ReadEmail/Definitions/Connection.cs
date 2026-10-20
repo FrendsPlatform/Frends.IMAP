@@ -1,12 +1,12 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Frends.IMAP.ReadEmail.Definitions;
 
 /// <summary>
-/// Settings for IMAP and POP3 servers
+/// Connection parameters for the IMAP server
 /// </summary>
-public class Settings
+public class Connection
 {
     /// <summary>
     /// Host address
@@ -31,7 +31,7 @@ public class Settings
     public bool UseSSL { get; set; }
 
     /// <summary>
-    /// Controls whether task will save attachments to designated directory or not
+    /// Accept all server certificates, including invalid ones
     /// </summary>
     /// <example>false</example>
     [DefaultValue(false)]

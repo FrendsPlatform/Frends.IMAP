@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Frends.IMAP.ReadEmail.Definitions;
@@ -8,19 +8,6 @@ namespace Frends.IMAP.ReadEmail.Definitions;
 /// </summary>
 public class Options
 {
-    /// <summary>
-    /// Maximum number of emails to retrieve
-    /// </summary>
-    /// <example>10</example>
-    [DefaultValue(10)]
-    public int MaxEmails { get; set; }
-
-    /// <summary>
-    /// Should get only unread emails?
-    /// </summary>
-    /// <example>false</example>
-    public bool GetOnlyUnreadEmails { get; set; }
-
     /// <summary>
     /// If true, then marks queried emails as read
     /// </summary>
@@ -57,4 +44,19 @@ public class Options
     [UIHint(nameof(SaveAttachments), "", true)]
     [DefaultValue(false)]
     public bool CreateDirectoryIfNotFound { get; set; }
+
+    /// <summary>
+    /// Whether to throw an error on failure.
+    /// </summary>
+    /// <example>true</example>
+    [DefaultValue(true)]
+    public bool ThrowErrorOnFailure { get; set; } = true;
+
+    /// <summary>
+    /// Overrides the error message on failure. If `ThrowErrorOnFailure` is set to `true`, then the original exception will be wrapped in a new Exception with this error message.
+    /// </summary>
+    /// <example>Reading emails failed: mailbox unavailable</example>
+    [DisplayFormat(DataFormatString = "Text")]
+    [DefaultValue("")]
+    public string ErrorMessageOnFailure { get; set; } = string.Empty;
 }

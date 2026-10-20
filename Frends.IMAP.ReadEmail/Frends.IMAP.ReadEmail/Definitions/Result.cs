@@ -7,13 +7,28 @@ namespace Frends.IMAP.ReadEmail.Definitions;
 /// </summary>
 public class Result
 {
+    internal Result(bool success, List<EmailMessage> emails = null, Error error = null)
+    {
+        Success = success;
+        Emails = emails;
+        Error = error;
+    }
+
     /// <summary>
-    /// List of emails that were retrieved.
+    /// Indicates whether the operation completed successfully.
     /// </summary>
+    /// <example>true</example>
+    public bool Success { get; private set; }
+
+    /// <summary>
+    /// List of emails that were retrieved. Null when Success is false.
+    /// </summary>
+    /// <example>[ { Id = "abc123", Subject = "Monthly report" } ]</example>
     public List<EmailMessage> Emails { get; private set; }
 
-    internal Result(List<EmailMessage> emails)
-    {
-        Emails = emails;
-    }
+    /// <summary>
+    /// Error details. Null when Success is true.
+    /// </summary>
+    /// <example>null</example>
+    public Error Error { get; private set; }
 }
